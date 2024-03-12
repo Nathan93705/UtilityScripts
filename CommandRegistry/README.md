@@ -1,180 +1,79 @@
-<div style="text-align:center"><img src="./resources/containermenu.png" alt="logo" width="800"/></div>
+# CommandRegistry - A SerenityJS API
 
-# ContainerMenu - A BDSX API
-
-ContainerMenu is an API for BDSX that allows you to create fake interactive container menus !
+CommandRegistry is an API for SerenityJS that allows you to registery slash commands to the serenity instance !
 
 ---
 
 ## Features
 
-- Multiple containers support
+- Callback support
 
-- Item transactions detection
-
-- container close detection
-
-- possibility to dynamically change items
-
-- custom container name !
+- Command Permissions
 
 - easy to use API
 
-#### Available container types
-
-- [x] Chest
-
-- [x] Double chest
-
-- [x] Trapped chest
-
-- [x] Double trapped chest
-
-- [x] Hopper
-
-- [x] Dropper
-
-- [x] Dispenser
-
-...and more to come !
-
 #### Soon to be added
 
-- Handling of non cancelled item transactions (possibility to take/place items)
-
-- More container types
+- Command Paramaters
 
 ## Installation
 
-#### Installing as an npm module
-
-run this command in your bdsx directory :
-
-```shell
-npm i @bdsx/containermenu
-```
-
-You can also use bdsx's `plugin-manager`
-
-#### Installing as a standalone plugin
-
-clone the repository in your `plugins` directory :
-
-```git
-git clone https://github.com/Se7en-dev/ContainerMenu.git
-```
+clone the `CommandRegistry.ts` into your own plugins `src` directory :
 
 ## Usage examples
 
-You can simply create and display a fake chest this way :
-
+Starting the registry and registerying a command
 ```ts
-const container = ContainerMenu.create(player, FakeContainerType.Chest);
-container.sendToPlayer();
+//Get The Registry	
+let registry = new CommandRegistry();
+//Start The Registry
+registry.startRegistry(this.serenity)
+//Register Command
+registry.register(
+    //Command Data
+    { 
+        permissionLevel: PermissionLevel.Member, 
+        name: "commandName", 
+        description: "commandDescription"
+    },
+    //Command Run Callback
+    (player, args) => {
+        //Do Something
+    }
+)
 ```
 
 *everything else is handled automatically !*
 
-You can add/delete items to the container this way :
+You can get all registered commands and this them by doing this :
 
 ```ts
-// Sets the item in slot 0
-container.setItem(0, ItemStack.constructWith("minecraft:diamond", 64));
-// Adds the item to the first empty slot
-container.addItem(ItemStack.constructWith("minecraft:diamond", 64));
-// Set multiple items at once
-container.setContents({
-            5: ItemStack.constructWith("minecraft:gold_ingot", 1),
-            7: ItemStack.constructWith("minecraft:iron_ingot", 1),
-            9: ItemStack.constructWith("minecraft:emerald", 1),
-        });
-// Clears the item in slot 5
-container.clearItem(5);
-// Clears all items
-container.clearContents();
+let commands = registry.getCommands()
+commands.forEach(command=>{
+    console.log("Command: /"+command.commandData.name)
+})
 ```
-
-*no need to destruct the ItemStacks, it is done automatically after the container is closed*
-
-Other features :
-
-```ts
-// Set a custom name to the container
-// (must be called before sending the container)
-container.setCustomName("BDSX is awesome !");
-// Closes the container client-side, and destructs it.
-container.closeContainer();
-```
-
-Using callbacks :
-
-```ts
-container.onTransaction((action) => {
-    // Do something here...
-});
-
-container.onContainerClose(() => {
-    // Do something here...
-});
-```
-
-*nb: returning `CANCEL` for item transactions does not change anything for now. In the future, Items will be able to be placed and taken unless `CANCEL` is returned.*
-
 ##### Simple examples
 
 Sends a message when a diamond is clicked :
 
 ```ts
-const container = ContainerMenu.create(actor, FakeContainerType.Chest);
-        container.addItem(ItemStack.constructWith("minecraft:iron_ingot", 1));
-        container.addItem(ItemStack.constructWith("minecraft:gold_ingot", 1));
-        container.addItem(ItemStack.constructWith("minecraft:diamond", 1));
-        container.sendToPlayer();
-        container.onTransaction((action) => {
-            if(action.type === ItemStackRequestActionType.Take && container.getItem(action.getSrc().slot)?.getName() === "minecraft:diamond") {
-                container.closeContainer();
-                actor.sendMessage("You have clicked the diamond!");
-            }
-        });
+let registry = new CommandRegistry();
+registry.startRegistry(this.serenity)
+registry.register(
+    //Command Data
+    { 
+        permissionLevel: PermissionLevel.Member, 
+        name: "hello", 
+        description: "Basic Hello World Command"
+    },
+    //Command Run Callback
+    (player, args) => {
+        player.sendMessage(`Hello World`) 
+    }
+)
 ```
-
-Sends a message when the player closes the container:
-
-```ts
-const container = ContainerMenu.create(actor, FakeContainerType.Chest);
-        container.sendToPlayer();
-        container.onContainerClose(() => {
-            actor.sendMessage("Container closed !");
-        });
-```
-
-#### Advanced usage
-Item destruction :
-
-When creating a fake container, if `destructItems` is set to true, items will be automatically destructed on container close. If set to false they won't, and need to be destructed manually (if needed to).
-```ts
-// The items will not be destructed when the container is closed
-const container = ContainerMenu.create(actor, FakeContainerType.DoubleChest, false);
-```
-This parameter can be overriden when calling item-related methods :
-```ts
-// The old item at slot 0 will not be destructed (destructItems is set to false)
-container.setItem(0, ItemStack.constructWith("minecraft:diamond", 1));
-// The old item at slot 0 will be destructed (destructItems is overriden to true)
-container.setItem(0, ItemStack.constructWith("minecraft:diamond", 1), true);
-```
-All items can be destructed at once :
-```ts
-// This is called automatically if destructItems is set to true
-container.destructAllItems();
-```
-
----
 
 ## Credits
 
-API base by [@Rjlintkh](https://github.com/Rjlintkh/)
-
-This plugin is licensed under **GNU General Public License v3.0**
-
-Feel free to contribute :)
+API base by [@Nathan93705]([https://github.com/Rjlintkh/](https://github.com/Nathan93705))
