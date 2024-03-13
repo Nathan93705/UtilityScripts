@@ -24,12 +24,10 @@ clone the `CommandRegistry.ts` into your own plugins `src` directory :
 
 Starting the registry and registerying a command
 ```ts
-//Get The Registry	
-let registry = new CommandRegistry();
 //Start The Registry
-registry.startRegistry(this.serenity)
+CommandRegistry.startRegistry(this.serenity)
 //Register Command
-registry.register(
+CommandRegistry.register(
     //Command Data
     { 
         permissionLevel: PermissionLevel.Member, 
@@ -48,7 +46,7 @@ registry.register(
 You can get all registered commands and this them by doing this :
 
 ```ts
-let commands = registry.getCommands()
+let commands = CommandRegistry.getCommands()
 commands.forEach(command=>{
     console.log("Command: /"+command.commandData.name)
 })
@@ -58,9 +56,8 @@ commands.forEach(command=>{
 Sends a message when a diamond is clicked :
 
 ```ts
-let registry = new CommandRegistry();
-registry.startRegistry(this.serenity)
-registry.register(
+CommandRegistry.startRegistry(this.serenity)
+CommandRegistry.register(
     //Command Data
     { 
         permissionLevel: PermissionLevel.Member, 
