@@ -1,3 +1,11 @@
+/****************************************
+
+            Command Registry
+               Version 1.0
+
+****************************************/
+
+
 import { Commands, Packet, PermissionLevel } from '@serenityjs/bedrock-protocol';
 import { Player, Serenity } from '@serenityjs/serenity';
 import { error } from 'console';
