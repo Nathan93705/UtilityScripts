@@ -1,7 +1,7 @@
 /****************************************
 
             Command Registry
-               Version 1.0
+               Version 1.1
 
 ****************************************/
 
@@ -23,16 +23,17 @@ interface RegistryCommand {
 let registeredCommands: RegistryCommand[] = []
 let registryStarted: boolean = false
 let instance: Serenity | undefined;
+
 /**
 * The Command Registry.
 */
-export default class CommandRegistry {
+export namespace CommandRegistry {
     
     /**
     * Starts The Command Registry.
     * @param   serenity The serenity instance.
     */
-    startRegistry(serenity: Serenity) {
+    export function startRegistry(serenity: Serenity) {
         if (registryStarted) {
             throw error(`Error Starting CommandRegistry; Registry Is Already Started`)
         }
@@ -40,8 +41,7 @@ export default class CommandRegistry {
         instance = serenity
         let network = serenity.network
         network.before(Packet.CommandRequest, ({ packet, session }) => {
-            let registry = new CommandRegistry()
-            let commands = registry.getCommands()
+            let commands = CommandRegistry.getCommands()
 
             let parsedCommand = packet.rawCommand
                 .slice(1)
@@ -58,8 +58,7 @@ export default class CommandRegistry {
             return true
         })
         network.before(Packet.AvailableCommands, ({ packet, session }) => {
-            let registry = new CommandRegistry()
-            let commands = registry.getCommands()
+            let commands = CommandRegistry.getCommands()
             for (const RegistryCommand of commands) {
                 let command: Commands = {
                     name: RegistryCommand.commandData.name,
@@ -85,7 +84,7 @@ export default class CommandRegistry {
     * (player, args) => {player.sendMessage(`Hello World`)}
     * )
     */
-    register(data: CommandData, callBack: (player: Player, args: string[]) => void) {
+    export function register(data: CommandData, callBack: (player: Player, args: string[]) => void) {
         if (!registryStarted) {
             throw error(`Error Registerying Command; Registry Is Not Started Run startRegistry() To Start It`)
         }
@@ -101,14 +100,14 @@ export default class CommandRegistry {
     * Fetches The Command Registry List.
     * @returns An Array Of The Registered Commands
     */
-    getCommands(): RegistryCommand[] {
+    export function getCommands(): RegistryCommand[] {
         return registeredCommands
     }
     /**
     * Checks The Command Registry If A Command Exists.
     * @returns Boolean
     */
-    commandExist(commandName: string): boolean {
+    export function commandExist(commandName: string): boolean {
         return !registeredCommands.some(({ commandData }) => {
             if (commandData.name === commandName) return true
             else return false
