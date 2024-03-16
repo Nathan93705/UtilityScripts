@@ -95,7 +95,7 @@ export namespace CommandRegistry {
         if (!(data.permissionLevel in PermissionLevel)) {
             throw error(`Error Registerying Command; Permission Level "${data.permissionLevel}" Doesnt Exist`)
         }
-        if (this.commandExist(data.name)) {
+        if (!this.commandExist(data.name)) {
             registeredCommands.push({ commandData: data, callBack: callBack })
             if (!instance) return
             instance.logger.info(`[Command Registry] Registered "${data.name}"`)
